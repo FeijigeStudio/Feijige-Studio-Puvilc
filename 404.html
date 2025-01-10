@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            position: relative;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 72px;
+            margin: 0;
+            color: #007bff;
+        }
+        p {
+            font-size: 24px;
+            margin: 10px 0 20px;
+        }
+        a {
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            border: 2px solid #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+        .language-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .language-switch a {
+            margin: 0 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switch">
+        <a href="#" onclick="switchLanguage('en')">English</a> |
+        <a href="#" onclick="switchLanguage('zh')">中文</a>
+    </div>
+    <div class="container">
+        <h1 id="errorTitle">404</h1>
+        <p id="errorMessage">Oops! The page you're looking for doesn't exist.</p>
+        <a href="index.html" id="homeLink">Go Back Home</a>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                errorTitle: "404",
+                errorMessage: "Oops! The page you're looking for doesn't exist.",
+                homeLink: "Go Back Home"
+            },
+            zh: {
+                errorTitle: "404",
+                errorMessage: "哎呀！您要找的页面不存在。",
+                homeLink: "返回首页"
+            }
+        };
+
+        function switchLanguage(lang) {
+            document.getElementById('errorTitle').textContent = translations[lang].errorTitle;
+            document.getElementById('errorMessage').textContent = translations[lang].errorMessage;
+            document.getElementById('homeLink').textContent = translations[lang].homeLink;
+        }
+
+        // 默认语言设置为英文
+        switchLanguage('en');
+    </script>
+</body>
+</html> 

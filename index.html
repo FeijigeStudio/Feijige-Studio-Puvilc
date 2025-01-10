@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        .title-3d {
+            perspective: 1000px;
+            text-align: center;
+            font-size: 48px;
+            font-weight: bold;
+            color: #007bff;
+            text-transform: uppercase;
+            margin: 40px 0;
+        }
+        .title-3d span {
+            display: inline-block;
+            animation: flip 2s infinite;
+            animation-delay: calc(.2s * var(--i));
+        }
+        @keyframes flip {
+            0%, 80% {
+                transform: rotateY(360deg);
+            }
+        }
+        /* Search styles */
+        .search-container {
+            position: relative;
+            max-width: 800px;
+            margin: 20px auto;
+        }
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0,123,255,0.2);
+        }
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+        }
+        .search-suggestions.active {
+            display: block;
+        }
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+        /* Language switcher */
+        .language-switcher {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+        }
+        .language-switcher a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="language-switcher">
+            <a href="#" onclick="switchLanguage('en')">English</a>
+            <a href="#" onclick="switchLanguage('zh')">中文</a>
+        </div>
+        <nav class="container">
+            <ul>
+                <li><a href="#home" class="nav-home">Home</a></li>
+                <li><a href="about.html" class="nav-about">About</a></li>
+                <li><a href="contact.html" class="nav-contact">Contact</a></li>
+                <li><a href="login.html" class="nav-login">Login</a></li>
+                <li><a href="register.html" class="nav-register">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="title-3d">
+            <span style="--i:1">F</span>
+            <span style="--i:2">e</span>
+            <span style="--i:3">i</span>
+            <span style="--i:4">j</span>
+            <span style="--i:5">i</span>
+            <span style="--i:6">g</span>
+            <span style="--i:7">e</span>
+            <span style="--i:8"> </span>
+            <span style="--i:9">S</span>
+            <span style="--i:10">t</span>
+            <span style="--i:11">u</span>
+            <span style="--i:12">d</span>
+            <span style="--i:13">i</span>
+            <span style="--i:14">o</span>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search projects..." oninput="showSuggestions()">
+            <div class="search-suggestions">
+                <!-- Search suggestions will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- Rest of the content -->
+    </main>
+
+    <script>
+        function showSuggestions() {
+            const input = document.querySelector('.search-input');
+            const suggestions = document.querySelector('.search-suggestions');
+            
+            if (input.value.length > 0) {
+                // This can be replaced with an actual API call to get suggestions
+                const mockSuggestions = [
+                    'Python Projects',
+                    'JavaScript Libraries',
+                    'Web Development Tools',
+                    'Machine Learning Models'
+                ];
+
+                suggestions.innerHTML = mockSuggestions
+                    .filter(s => s.toLowerCase().includes(input.value.toLowerCase()))
+                    .map(s => `<div class="suggestion-item">${s}</div>`)
+                    .join('');
+
+                suggestions.classList.add('active');
+            } else {
+                suggestions.classList.remove('active');
+            }
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            const suggestions = document.querySelector('.search-suggestions');
+            if (!e.target.closest('.search-container')) {
+                suggestions.classList.remove('active');
+            }
+        });
+
+        function switchLanguage(lang) {
+            // Implement language switching logic here
+            const translations = {
+                en: {
+                    home: "Home",
+                    about: "About",
+                    contact: "Contact",
+                    login: "Login",
+                    register: "Register",
+                    searchPlaceholder: "Search projects..."
+                },
+                zh: {
+                    home: "首页",
+                    about: "关于",
+                    contact: "联系我们",
+                    login: "登录",
+                    register: "注册",
+                    searchPlaceholder: "搜索项目..."
+                }
+            };
+
+            document.querySelector('.nav-home').textContent = translations[lang].home;
+            document.querySelector('.nav-about').textContent = translations[lang].about;
+            document.querySelector('.nav-contact').textContent = translations[lang].contact;
+            document.querySelector('.nav-login').textContent = translations[lang].login;
+            document.querySelector('.nav-register').textContent = translations[lang].register;
+            document.querySelector('.search-input').placeholder = translations[lang].searchPlaceholder;
+        }
+    </script>
+</body>
+</html>
+

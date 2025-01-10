@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #eceff1;
+            color: #333;
+        }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .checkbox-container:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(0,0,0,0.2);
+        }
+        .custom-checkbox {
+            width: 30px;
+            height: 30px;
+            margin-right: 15px;
+            border: 3px solid #42a5f5;
+            border-radius: 50%;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .custom-checkbox.checked {
+            background: #42a5f5;
+            border-color: #1e88e5;
+        }
+        .custom-checkbox.checked::after {
+            content: '✔';
+            color: white;
+            font-size: 20px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .verify-text {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .language-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 16px;
+        }
+        button {
+            background: none;
+            border: none;
+            color: #42a5f5;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-switch">
+        <button onclick="switchLanguage('en')">English</button>
+        <button onclick="switchLanguage('zh')">中文</button>
+    </div>
+    <div class="checkbox-container" onclick="toggleCheckbox()">
+        <div class="custom-checkbox" id="checkbox"></div>
+        <div class="verify-text" id="verifyText">I'm not a robot</div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                verifyText: "I'm not a robot"
+            },
+            zh: {
+                verifyText: "我不是机器人"
+            }
+        };
+
+        function toggleCheckbox() {
+            const checkbox = document.getElementById('checkbox');
+            checkbox.classList.toggle('checked');
+            if (checkbox.classList.contains('checked')) {
+                alert('Verification Successful!');
+                window.location.href = 'login.html'; // Redirect to login page on success
+            }
+        }
+
+        function switchLanguage(lang) {
+            document.getElementById('verifyText').textContent = translations[lang].verifyText;
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* 基础样式 */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .about-content {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 40px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .about-section {
+            margin-bottom: 30px;
+        }
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .team-member {
+            text-align: center;
+        }
+        .team-member img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        .team-section {
+            position: fixed;
+            right: 0;
+            top: 60px;
+            width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-left: 1px solid #ddd;
+            height: 100%;
+            overflow-y: auto;
+        }
+        /* 悬浮窗口样式 */
+        .floating-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 9999;
+            text-align: center; /* 居中对齐文本 */
+        }
+        .floating-window button {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 10px; /* 圆角按钮 */
+        }
+
+        /* 语言切换按钮样式 */
+        .language-switch {
+            margin-top: 10px;
+        }
+        .language-switch button {
+            margin-left: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 10px; /* 圆角按钮 */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- 复制index.html的导航栏 -->
+        <div class="language-switch">
+            <button onclick="setLanguage('en')">English</button>
+            <button onclick="setLanguage('zh')">中文</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="about-content">
+            <div class="about-section">
+                <h2 id="about-title">About Feijige Studio</h2>
+                <p id="about-description">Feijige Studio is a community-driven platform dedicated to providing developers with a collaborative space to share, learn, and grow. Our mission is to foster an open and inclusive environment where developers from all over the world can come together to exchange ideas, contribute to open-source projects, and build amazing software.</p>
+            </div>
+
+            <div class="about-section">
+                <h2 id="mission-title">Our Mission</h2>
+                <p id="mission-description">To create an open and collaborative environment for developers worldwide to share knowledge and build amazing projects together. We believe that by working together, we can achieve more and drive innovation in the tech industry.</p>
+            </div>
+
+            <div class="about-section">
+                <h2 id="values-title">Core Values</h2>
+                <ul id="values-list">
+                    <li><strong>Openness and Inclusivity:</strong> Feijige Studio advocates for a borderless culture of technical exchange. Whether you are a novice developer or an experienced industry expert, you can find your place and value here.</li>
+                    <li><strong>Collaboration and Win-Win:</strong> Teamwork is a core value of our studio. We understand that it is difficult for a single individual to tackle large-scale, comprehensive project challenges in today's complex technical environment.</li>
+                    <li><strong>Knowledge Inheritance:</strong> The studio values the accumulation and inheritance of technical knowledge, striving to build a sustainable technical learning ecosystem.</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2 id="features-title">Platform Features</h2>
+                <ul id="features-list">
+                    <li><strong>Diverse Project Resources:</strong> Feijige Studio gathers open-source projects from various fields, covering popular technologies such as AI, big data, cloud computing, blockchain, and mobile development.</li>
+                    <li><strong>Active Community Interaction:</strong> Our community forum is the core place for developers to interact. Developers can engage in deep exchanges with peers through likes, comments, private messages, etc.</li>
+                    <li><strong>Professional Technical Support:</strong> To help developers better tackle various technical challenges during project development, Feijige Studio has assembled a professional technical support team of industry experts and tech gurus.</li>
+                    <li><strong>Personalized Growth Path Planning:</strong> We provide each user with a personalized growth path plan, recommending suitable learning resources, project opportunities, and career development directions.</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2 id="success-title">Success Stories and Community Impact</h2>
+                <p id="success-stories">Since its inception, Feijige Studio has successfully incubated numerous outstanding open-source projects and has had a wide impact globally. For example, one of our AI open-source projects attracted thousands of developers from dozens of countries worldwide within a few months.</p>
+                <p id="future-vision">In the future, Feijige Studio will continue to adhere to its original intention, constantly innovate and improve platform functions and services, strengthen cooperation and exchanges with global technical communities, and provide developers with a more high-quality, efficient collaboration space and growth environment.</p>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h2 id="team-title">Our Team</h2>
+            <div class="team-grid">
+                <!-- 团队成员信息 -->
+                <div class="team-member">
+                    <img src="team_member_feijige.jpg" alt="Feijige">
+                    <h3>Feijige</h3>
+                    <p>Founder & CEO</p>
+                </div>
+                <div class="team-member">
+                    <img src="team_member_anran.jpg" alt="Anran">
+                    <h3>Anran</h3>
+                    <p>Lead Developer</p>
+                </div>
+                <div class="team-member">
+                    <img src="team_member_xiaopei.jpg" alt="Xiaopei">
+                    <h3>Xiaopei</h3>
+                    <p>Project Manager</p>
+                </div>
+                <div class="team-member">
+                    <img src="team_member_xiaobai.jpg" alt="Xiaobai">
+                    <h3>Xiaobai</h3>
+                    <p>Designer</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 悬浮窗口 -->
+        <div class="floating-window" id="welcome-window">
+            <br> <!-- 增加顶部空行 -->
+            <h3 id="welcome-title">Welcome to Feijige Studio</h3>
+            <p id="welcome-message">Join our community and start collaborating today!</p>
+            <p id="partner">Partner: <a href="https://www.lonteng.us.kg" target="_blank">Xiaoyu</a></p>
+            <button onclick="closeWindow()">Confirm</button>
+            <div class="language-switch">
+                <button onclick="setWindowLanguage('en')">English</button>
+                <button onclick="setWindowLanguage('zh')">中文</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 语言切换功能
+        const translations = {
+            en: {
+                aboutTitle: "About Feijige Studio",
+                aboutDescription: "Feijige Studio is a community-driven platform dedicated to providing developers with a collaborative space to share, learn, and grow. Our mission is to foster an open and inclusive environment where developers from all over the world can come together to exchange ideas, contribute to open-source projects, and build amazing software.",
+                missionTitle: "Our Mission",
+                missionDescription: "To create an open and collaborative environment for developers worldwide to share knowledge and build amazing projects together. We believe that by working together, we can achieve more and drive innovation in the tech industry.",
+                valuesTitle: "Core Values",
+                valuesList: `
+                    <li><strong>Openness and Inclusivity:</strong> Feijige Studio advocates for a borderless culture of technical exchange. Whether you are a novice developer or an experienced industry expert, you can find your place and value here.</li>
+                    <li><strong>Collaboration and Win-Win:</strong> Teamwork is a core value of our studio. We understand that it is difficult for a single individual to tackle large-scale, comprehensive project challenges in today's complex technical environment.</li>
+                    <li><strong>Knowledge Inheritance:</strong> The studio values the accumulation and inheritance of technical knowledge, striving to build a sustainable technical learning ecosystem.</li>
+                `,
+                featuresTitle: "Platform Features",
+                featuresList: `
+                    <li><strong>Diverse Project Resources:</strong> Feijige Studio gathers open-source projects from various fields, covering popular technologies such as AI, big data, cloud computing, blockchain, and mobile development.</li>
+                    <li><strong>Active Community Interaction:</strong> Our community forum is the core place for developers to interact. Developers can engage in deep exchanges with peers through likes, comments, private messages, etc.</li>
+                    <li><strong>Professional Technical Support:</strong> To help developers better tackle various technical challenges during project development, Feijige Studio has assembled a professional technical support team of industry experts and tech gurus.</li>
+                    <li><strong>Personalized Growth Path Planning:</strong> We provide each user with a personalized growth path plan, recommending suitable learning resources, project opportunities, and career development directions.</li>
+                `,
+                successTitle: "Success Stories and Community Impact",
+                successStories: "Since its inception, Feijige Studio has successfully incubated numerous outstanding open-source projects and has had a wide impact globally. For example, one of our AI open-source projects attracted thousands of developers from dozens of countries worldwide within a few months.",
+                futureVision: "In the future, Feijige Studio will continue to adhere to its original intention, constantly innovate and improve platform functions and services, strengthen cooperation and exchanges with global technical communities, and provide developers with a more high-quality, efficient collaboration space and growth environment.",
+                teamTitle: "Our Team",
+                welcomeTitle: "Welcome to Feijige Studio",
+                welcomeMessage: "Join our community and start collaborating today!",
+                partnerMessage: "Partner: <a href='https://www.lonteng.us.kg' target='_blank'>Xiaoyu</a>",
+                confirmButton: "Confirm"
+            },
+            zh: {
+                aboutTitle: "关于飞机哥工作室",
+                aboutDescription: "在当今科技飞速���展的时代，飞机哥工作室作为一个独具特色且充满活力的社区驱动型平台，正逐渐崭露头角，成为众多开发者心目中的理想家园与创意源泉。",
+                missionTitle: "使命与愿景",
+                missionDescription: "我们秉持着一个清晰而坚定的使命：通过打造一个开放透明、包容多元的协作环境，助力全球开发者实现知识共享、技能提升与项目突破，进而推动整个技术行业的持续创新与蓬勃发展。我们坚信，每一位开发者都拥有独特的智慧与无限的潜力，而飞机哥工作室则是激发这些潜能、促进相互学习与共同成长的催化剂。我们的愿景是成为全球技术创新领域的重要枢纽，引领未来科技发展的潮流，为构建一个更加智能、便捷与美好的数字化世界贡献力量。",
+                valuesTitle: "核心价值",
+                valuesList: `
+                    <li><strong>开放包容：</strong>飞机哥工作室倡导一种无边界的技术交流文化，无论你是初出茅庐的新手开发者，还是经验丰富的行业大咖，都能在这里找到属于自己的位置和价值。</li>
+                    <li><strong>协作共赢：</strong>团队合作是我们工作室的核心价值之一。我们深知，在当今复杂多变的技术环境下，单一的个体很难应对大规模、综合性的项目挑战。</li>
+                    <li><strong>知识传承：</strong>工作室重视技术知识的积累与传承，致力于打造一个可持续发展的技术学习生态。</li>
+                `,
+                featuresTitle: "平台特色",
+                featuresList: `
+                    <li><strong>丰富多元的项目资源：</strong>飞机哥工作室汇聚了来自各个领域的开源项目，涵盖人工智能、大数据、云计算、区块链、移动开发等热门技术方向。</li>
+                    <li><strong>活跃高效的社区互动：</strong>我们的社区论坛是开发者们交流互动的核心场所，每天都有大量的技术讨论帖、问题求助帖以及经验分享帖在这里发布。</li>
+                    <li><strong>专业精准的技术支持：</strong>为了帮助开发者更好地应对项目开发过程中遇到的各种技术难题，飞机哥工作室组建了一支由行业专家、技术大牛组成的专业技术支持团队。</li>
+                    <li><strong>个性化的成长路径规划：</strong>我们为每位用户量身定制了个性化的成长路径规划，推荐适合的学习资源、项目机会以及职业发展方向。</li>
+                `,
+                successTitle: "成功案例与社区影响力",
+                successStories: "自成立以来，飞机哥工作室已经成功孵化了众多优秀的开源项目，并在全球范围内产生了广泛的影响力。例如，我们的某人工智能开源项目在短短几个月内就吸引了来自全球数十个国家的上千名开发者参与贡献。",
+                futureVision: "在未来的发展中，飞机哥工作室将继续坚守初心，不断创新与完善平台功能与服务，加强与全球技术社区的合作与交流，为广大开发者提供更加优质、高效的协作空间与成长环境��",
+                teamTitle: "我们的团队",
+                welcomeTitle: "欢迎来到飞机哥工作室",
+                welcomeMessage: "加入我们的社区，开始协作吧！",
+                partnerMessage: "合作商：<a href='https://www.lonteng.us.kg' target='_blank'>Xiaoyu</a>",
+                confirmButton: "确定"
+            }
+        };
+
+        function setLanguage(language) {
+            document.getElementById('about-title').innerText = translations[language].aboutTitle;
+            document.getElementById('about-description').innerText = translations[language].aboutDescription;
+            document.getElementById('mission-title').innerText = translations[language].missionTitle;
+            document.getElementById('mission-description').innerText = translations[language].missionDescription;
+            document.getElementById('values-title').innerText = translations[language].valuesTitle;
+            document.getElementById('values-list').innerHTML = translations[language].valuesList;
+            document.getElementById('features-title').innerText = translations[language].featuresTitle;
+            document.getElementById('features-list').innerHTML = translations[language].featuresList;
+            document.getElementById('success-title').innerText = translations[language].successTitle;
+            document.getElementById('success-stories').innerText = translations[language].successStories;
+            document.getElementById('future-vision').innerText = translations[language].futureVision;
+            document.getElementById('team-title').innerText = translations[language].teamTitle;
+        }
+
+        function setWindowLanguage(language) {
+            document.getElementById('welcome-title').innerText = translations[language].welcomeTitle;
+            document.getElementById('welcome-message').innerText = translations[language].welcomeMessage;
+            document.getElementById('partner').innerHTML = translations[language].partnerMessage;
+            document.querySelector('.floating-window button').innerText = translations[language].confirmButton;
+        }
+
+        // 设置默认语言为英语
+        setLanguage('en');
+        setWindowLanguage('en');
+
+        // 关闭悬浮窗口
+        function closeWindow() {
+            document.getElementById('welcome-window').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

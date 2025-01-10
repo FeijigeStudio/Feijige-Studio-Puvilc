@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #333;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .data-table th {
+            background-color: #f8f9fa;
+        }
+
+        .action-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .status-active {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-inactive {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .lang-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 id="adminTitle">Admin Panel</h2>
+            <ul class="sidebar-menu">
+                <li><a href="index.html" id="menuHome">Back to Home</a></li>
+                <li><a href="admin-dashboard.html" id="menuDashboard">Dashboard</a></li>
+                <li><a href="users-management.html" id="menuUsers">Users</a></li>
+                <li><a href="comments-management.html" id="menuComments">Comments</a></li>
+                <li><a href="settings.html" id="menuSettings">Settings</a></li>
+                <li><a href="terminal-management.html" id="menuTerminal">Terminal</a></li>
+                <li><a href="login-admin-feijigestudio.html" id="menuLogout" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="language-switcher">
+                <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+                <button class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+            </div>
+
+            <h1 id="dashboardTitle">Dashboard</h1>
+            
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3 id="totalUsersTitle">Total Users</h3>
+                    <p id="totalUsers">Loading...</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3 id="totalProjectsTitle">Total Projects</h3>
+                    <p id="totalProjects">Loading...</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3 id="activeUsersTitle">Active Users</h3>
+                    <p id="activeUsers">Loading...</p>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <h3 id="recentUsersTitle">Recent Users</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th id="thUsername">Username</th>
+                            <th id="thEmail">Email</th>
+                            <th id="thStatus">Status</th>
+                            <th id="thActions">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="userTableBody">
+                        <!-- Data will be loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                adminPanel: "Admin Panel",
+                backToHome: "Back to Home",
+                dashboard: "Dashboard",
+                users: "Users",
+                comments: "Comments",
+                settings: "Settings",
+                logout: "Logout",
+                totalUsers: "Total Users",
+                totalProjects: "Total Projects",
+                activeUsers: "Active Users",
+                recentUsers: "Recent Users",
+                username: "Username",
+                email: "Email",
+                status: "Status",
+                actions: "Actions",
+                edit: "Edit",
+                delete: "Delete",
+                confirmDelete: "Are you sure you want to delete this user?",
+                loading: "Loading...",
+                userStatus: {
+                    active: "Active",
+                    inactive: "Inactive",
+                    banned: "Banned",
+                    pending: "Pending"
+                },
+                statistics: {
+                    today: "Today",
+                    thisWeek: "This Week",
+                    thisMonth: "This Month",
+                    total: "Total"
+                }
+            },
+            zh: {
+                adminPanel: "管理面板",
+                backToHome: "返回主页",
+                dashboard: "仪表盘",
+                users: "用户管理",
+                comments: "评论管理",
+                settings: "设置",
+                logout: "退出登录",
+                totalUsers: "总用户数",
+                totalProjects: "总项目数",
+                activeUsers: "活跃用户",
+                recentUsers: "最近用户",
+                username: "用户名",
+                email: "邮箱",
+                status: "状态",
+                actions: "操作",
+                edit: "编辑",
+                delete: "删除",
+                confirmDelete: "确定要删除这个用户吗？",
+                loading: "加载中...",
+                userStatus: {
+                    active: "活跃",
+                    inactive: "已禁用",
+                    banned: "已封禁",
+                    pending: "待审核"
+                },
+                statistics: {
+                    today: "今日",
+                    thisWeek: "本周",
+                    thisMonth: "本月",
+                    total: "总计"
+                }
+            }
+        };
+
+        let currentLang = 'en';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('adminLang', lang);
+            document.getElementById('adminTitle').textContent = translations[lang].adminPanel;
+            document.getElementById('menuHome').textContent = translations[lang].backToHome;
+            document.getElementById('menuDashboard').textContent = translations[lang].dashboard;
+            document.getElementById('menuUsers').textContent = translations[lang].users;
+            document.getElementById('menuComments').textContent = translations[lang].comments;
+            document.getElementById('menuSettings').textContent = translations[lang].settings;
+            document.getElementById('menuLogout').textContent = translations[lang].logout;
+            document.getElementById('dashboardTitle').textContent = translations[lang].dashboard;
+            document.getElementById('totalUsersTitle').textContent = translations[lang].totalUsers;
+            document.getElementById('totalProjectsTitle').textContent = translations[lang].totalProjects;
+            document.getElementById('activeUsersTitle').textContent = translations[lang].activeUsers;
+            document.getElementById('recentUsersTitle').textContent = translations[lang].recentUsers;
+            document.getElementById('thUsername').textContent = translations[lang].username;
+            document.getElementById('thEmail').textContent = translations[lang].email;
+            document.getElementById('thStatus').textContent = translations[lang].status;
+            document.getElementById('thActions').textContent = translations[lang].actions;
+            
+            fetchDashboardData();
+        }
+
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('/api/admin/dashboard');
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                console.error('Error fetching dashboard data:', error);
+                updateDashboard({
+                    totalUsers: 150,
+                    totalProjects: 45,
+                    activeUsers: 89,
+                    recentUsers: [
+                        { id: 1, username: "user1", email: "user1@example.com", status: "active" },
+                        { id: 2, username: "user2", email: "user2@example.com", status: "inactive" }
+                    ]
+                });
+            }
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('totalUsers').textContent = data.totalUsers;
+            document.getElementById('totalProjects').textContent = data.totalProjects;
+            document.getElementById('activeUsers').textContent = data.activeUsers;
+
+            const userTableBody = document.getElementById('userTableBody');
+            userTableBody.innerHTML = data.recentUsers.map(user => `
+                <tr>
+                    <td>${user.id}</td>
+                    <td>${user.username}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="status-badge ${user.status === 'active' ? 'status-active' : 'status-inactive'}">
+                            ${translations[currentLang].userStatus[user.status]}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="action-button edit-btn" onclick="editUser(${user.id})">${translations[currentLang].edit}</button>
+                        <button class="action-button delete-btn" onclick="deleteUser(${user.id})">${translations[currentLang].delete}</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function editUser(userId) {
+            console.log('Editing user:', userId);
+        }
+
+        async function deleteUser(userId) {
+            if (confirm(translations[currentLang].confirmDelete)) {
+                try {
+                    const response = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        fetchDashboardData();
+                    }
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                }
+            }
+        }
+
+        fetchDashboardData();
+
+        // 修改检查登录状态的函数
+        function checkAdminLogin() {
+            const isAdmin = sessionStorage.getItem('adminLoggedIn');
+            if (!isAdmin) {
+                window.location.href = 'login-admin-feijigestudio.html';
+                return;
+            }
+        }
+
+        // 添加登出处理函数
+        function handleLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('user_id');
+            sessionStorage.removeItem('username');
+            window.location.href = 'login-admin-feijigestudio.html';
+        }
+
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminLogin();
+            switchLanguage('en');
+            fetchDashboardData();
+        });
+    </script>
+</body>
+</html> 

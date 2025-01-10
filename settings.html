@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #333;
+        }
+
+        .settings-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .settings-section {
+            margin-bottom: 30px;
+        }
+
+        .settings-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="password"],
+        .form-group input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: white;
+        }
+
+        .save-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .save-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .lang-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .success-message {
+            color: #28a745;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .terminal-btn {
+            padding: 8px 15px;
+            background-color: #1a1a1a;
+            color: #0f0;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            transition: all 0.3s;
+        }
+
+        .terminal-btn:hover {
+            background-color: #0f0;
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 id="adminTitle">Admin Panel</h2>
+            <ul class="sidebar-menu">
+                <li><a href="index.html" id="menuHome">Back to Home</a></li>
+                <li><a href="admin-dashboard.html" id="menuDashboard">Dashboard</a></li>
+                <li><a href="users-management.html" id="menuUsers">Users</a></li>
+                <li><a href="comments-management.html" id="menuComments">Comments</a></li>
+                <li><a href="settings.html" id="menuSettings">Settings</a></li>
+                <li><a href="terminal-management.html" id="menuTerminal">Terminal</a></li>
+                <li><a href="login-admin-feijigestudio.html" id="menuLogout" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="language-switcher">
+                <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+                <button class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+            </div>
+
+            <h1 id="pageTitle">Settings</h1>
+
+            <div class="settings-card">
+                <div class="settings-section">
+                    <h2 id="accountSettingsTitle">Account Settings</h2>
+                    <div class="form-group">
+                        <label for="adminUsername" id="usernameLabel">Admin Username</label>
+                        <input type="text" id="adminUsername" value="admin" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="adminEmail" id="emailLabel">Email</label>
+                        <input type="email" id="adminEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="currentPassword" id="currentPasswordLabel">Current Password</label>
+                        <input type="password" id="currentPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword" id="newPasswordLabel">New Password</label>
+                        <input type="password" id="newPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword" id="confirmPasswordLabel">Confirm New Password</label>
+                        <input type="password" id="confirmPassword">
+                    </div>
+                    <button class="save-btn" onclick="saveAccountSettings()" id="saveAccountBtn">Save Changes</button>
+                    <div id="accountSuccessMessage" class="success-message">Settings saved successfully!</div>
+                    <div id="accountErrorMessage" class="error-message">Error saving settings. Please try again.</div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-section">
+                    <h2 id="siteSettingsTitle">Site Settings</h2>
+                    <div class="form-group">
+                        <label for="siteName" id="siteNameLabel">Site Name</label>
+                        <input type="text" id="siteName" value="Feijige Studio">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteDescription" id="siteDescriptionLabel">Site Description</label>
+                        <input type="text" id="siteDescription">
+                    </div>
+                    <div class="form-group">
+                        <label for="defaultLanguage" id="defaultLanguageLabel">Default Language</label>
+                        <select id="defaultLanguage">
+                            <option value="en">English</option>
+                            <option value="zh">中文</option>
+                        </select>
+                    </div>
+                    <button class="save-btn" onclick="saveSiteSettings()" id="saveSiteBtn">Save Changes</button>
+                    <div id="siteSuccessMessage" class="success-message">Settings saved successfully!</div>
+                    <div id="siteErrorMessage" class="error-message">Error saving settings. Please try again.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                adminPanel: "Admin Panel",
+                backToHome: "Back to Home",
+                dashboard: "Dashboard",
+                users: "Users",
+                comments: "Comments",
+                settings: "Settings",
+                logout: "Logout",
+                accountSettings: "Account Settings",
+                siteSettings: "Site Settings",
+                adminUsername: "Admin Username",
+                email: "Email",
+                currentPassword: "Current Password",
+                newPassword: "New Password",
+                confirmPassword: "Confirm New Password",
+                siteName: "Site Name",
+                siteDescription: "Site Description",
+                defaultLanguage: "Default Language",
+                saveChanges: "Save Changes",
+                successMessage: "Settings saved successfully!",
+                errorMessage: "Error saving settings. Please try again.",
+                settingsRestored: "Settings restored successfully!",
+                restoreError: "Error restoring settings. Please try again.",
+                invalidEmail: "Invalid email format",
+                passwordTooShort: "Password must be at least 8 characters long"
+            },
+            zh: {
+                adminPanel: "管理面板",
+                backToHome: "返回主页",
+                dashboard: "仪表盘",
+                users: "用户管理",
+                comments: "评论管理",
+                settings: "设置",
+                logout: "退出登录",
+                accountSettings: "账户设置",
+                siteSettings: "网站设置",
+                adminUsername: "管理员用户名",
+                email: "邮箱",
+                currentPassword: "当前密码",
+                newPassword: "新密码",
+                confirmPassword: "确认新密码",
+                siteName: "网站名称",
+                siteDescription: "网站描述",
+                defaultLanguage: "默认语言",
+                saveChanges: "保存更改",
+                successMessage: "设置保存成功！",
+                errorMessage: "保存设置时出错，请重试。",
+                settingsRestored: "设置恢复成功！",
+                restoreError: "设置恢复时出错，请重试。",
+                invalidEmail: "邮箱格式无效",
+                passwordTooShort: "密码长度必须至少为8个字符"
+            }
+        };
+
+        let currentLang = localStorage.getItem('adminLang') || 'en';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('adminLang', lang);
+            updateTranslations();
+        }
+
+        function updateTranslations() {
+            // 更新侧边栏
+            document.getElementById('adminTitle').textContent = translations[currentLang].adminPanel;
+            document.getElementById('menuHome').textContent = translations[currentLang].backToHome;
+            document.getElementById('menuDashboard').textContent = translations[currentLang].dashboard;
+            document.getElementById('menuUsers').textContent = translations[currentLang].users;
+            document.getElementById('menuComments').textContent = translations[currentLang].comments;
+            document.getElementById('menuSettings').textContent = translations[currentLang].settings;
+            document.getElementById('menuLogout').textContent = translations[currentLang].logout;
+
+            // 更新页面标题
+            document.getElementById('pageTitle').textContent = translations[currentLang].settings;
+            document.getElementById('accountSettingsTitle').textContent = translations[currentLang].accountSettings;
+            document.getElementById('siteSettingsTitle').textContent = translations[currentLang].siteSettings;
+
+            // 更新表单标签
+            document.getElementById('usernameLabel').textContent = translations[currentLang].adminUsername;
+            document.getElementById('emailLabel').textContent = translations[currentLang].email;
+            document.getElementById('currentPasswordLabel').textContent = translations[currentLang].currentPassword;
+            document.getElementById('newPasswordLabel').textContent = translations[currentLang].newPassword;
+            document.getElementById('confirmPasswordLabel').textContent = translations[currentLang].confirmPassword;
+            document.getElementById('siteNameLabel').textContent = translations[currentLang].siteName;
+            document.getElementById('siteDescriptionLabel').textContent = translations[currentLang].siteDescription;
+            document.getElementById('defaultLanguageLabel').textContent = translations[currentLang].defaultLanguage;
+
+            // 更新按钮
+            document.getElementById('saveAccountBtn').textContent = translations[currentLang].saveChanges;
+            document.getElementById('saveSiteBtn').textContent = translations[currentLang].saveChanges;
+
+            // 更新消息
+            document.getElementById('accountSuccessMessage').textContent = translations[currentLang].successMessage;
+            document.getElementById('accountErrorMessage').textContent = translations[currentLang].errorMessage;
+            document.getElementById('siteSuccessMessage').textContent = translations[currentLang].successMessage;
+            document.getElementById('siteErrorMessage').textContent = translations[currentLang].errorMessage;
+        }
+
+        async function saveAccountSettings() {
+            const email = document.getElementById('adminEmail').value;
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (newPassword !== confirmPassword) {
+                document.getElementById('accountErrorMessage').textContent = "New passwords don't match";
+                document.getElementById('accountErrorMessage').style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/settings/account', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        currentPassword,
+                        newPassword
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('accountSuccessMessage').style.display = 'block';
+                    document.getElementById('accountErrorMessage').style.display = 'none';
+                    // 清空密码字段
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                } else {
+                    throw new Error('Failed to save account settings');
+                }
+            } catch (error) {
+                console.error('Error saving account settings:', error);
+                document.getElementById('accountErrorMessage').style.display = 'block';
+                document.getElementById('accountSuccessMessage').style.display = 'none';
+            }
+        }
+
+        async function saveSiteSettings() {
+            const siteName = document.getElementById('siteName').value;
+            const siteDescription = document.getElementById('siteDescription').value;
+            const defaultLanguage = document.getElementById('defaultLanguage').value;
+
+            try {
+                const response = await fetch('/api/admin/settings/site', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        siteName,
+                        siteDescription,
+                        defaultLanguage
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('siteSuccessMessage').style.display = 'block';
+                    document.getElementById('siteErrorMessage').style.display = 'none';
+                } else {
+                    throw new Error('Failed to save site settings');
+                }
+            } catch (error) {
+                console.error('Error saving site settings:', error);
+                document.getElementById('siteErrorMessage').style.display = 'block';
+                document.getElementById('siteSuccessMessage').style.display = 'none';
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('user_id');
+            sessionStorage.removeItem('username');
+            window.location.href = 'login-admin-feijigestudio.html';
+        }
+
+        // 修改检查登录状态的函数
+        function checkAdminLogin() {
+            const isAdmin = sessionStorage.getItem('adminLoggedIn');
+            if (!isAdmin) {
+                window.location.href = 'login-admin-feijigestudio.html';
+                return;
+            }
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminLogin();
+            switchLanguage(currentLang);
+        });
+
+        // 设置备份功能
+        function backupSettings() {
+            const settings = {
+                site: {
+                    name: document.getElementById('siteName').value,
+                    description: document.getElementById('siteDescription').value,
+                    defaultLanguage: document.getElementById('defaultLanguage').value
+                },
+                admin: {
+                    email: document.getElementById('adminEmail').value
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(settings, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `settings_backup_${new Date().toISOString()}.json`;
+            a.click();
+        }
+
+        // 设置恢复功能
+        async function restoreSettings(file) {
+            try {
+                const text = await file.text();
+                const settings = JSON.parse(text);
+                
+                // 恢复网站设置
+                if (settings.site) {
+                    document.getElementById('siteName').value = settings.site.name || '';
+                    document.getElementById('siteDescription').value = settings.site.description || '';
+                    document.getElementById('defaultLanguage').value = settings.site.defaultLanguage || 'en';
+                }
+                
+                // 恢复管理员设置
+                if (settings.admin) {
+                    document.getElementById('adminEmail').value = settings.admin.email || '';
+                }
+
+                showNotification(translations[currentLang].settingsRestored);
+            } catch (error) {
+                showNotification(translations[currentLang].restoreError, 'error');
+            }
+        }
+
+        // 自动保存功能
+        let autoSaveTimeout;
+        function setupAutoSave() {
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => {
+                    clearTimeout(autoSaveTimeout);
+                    autoSaveTimeout = setTimeout(() => {
+                        saveSiteSettings();
+                    }, 2000);
+                });
+            });
+        }
+
+        // 设置验证功能
+        function validateSettings() {
+            const email = document.getElementById('adminEmail').value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email)) {
+                showNotification(translations[currentLang].invalidEmail, 'error');
+                return false;
+            }
+
+            const newPassword = document.getElementById('newPassword').value;
+            if (newPassword && newPassword.length < 8) {
+                showNotification(translations[currentLang].passwordTooShort, 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // 设置导入导出功能
+        function importSettings(file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const settings = JSON.parse(e.target.result);
+                    await restoreSettings(settings);
+                    showNotification(translations[currentLang].importSuccess);
+                } catch (error) {
+                    showNotification(translations[currentLang].importError, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 设置历史记录功��
+        function saveSettingsHistory() {
+            const currentSettings = {
+                timestamp: new Date().toISOString(),
+                settings: {
+                    siteName: document.getElementById('siteName').value,
+                    siteDescription: document.getElementById('siteDescription').value,
+                    defaultLanguage: document.getElementById('defaultLanguage').value
+                }
+            };
+
+            const history = JSON.parse(localStorage.getItem('settingsHistory') || '[]');
+            history.unshift(currentSettings);
+            if (history.length > 10) history.pop();
+            localStorage.setItem('settingsHistory', JSON.stringify(history));
+        }
+
+        // 设置回滚功能
+        function rollbackSettings(timestamp) {
+            const history = JSON.parse(localStorage.getItem('settingsHistory') || '[]');
+            const settings = history.find(h => h.timestamp === timestamp);
+            if (settings) {
+                restoreSettings(settings.settings);
+                showNotification(translations[currentLang].rollbackSuccess);
+            }
+        }
+
+        // 密码强度检查功能
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/)) strength++;
+            if (password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+            return strength;
+        }
+
+        // 系统配置控制
+        const systemConfig = {
+            config: new Map(),
+
+            setConfig(key, value) {
+                this.config.set(key, value);
+                this.saveConfig();
+            },
+
+            getConfig(key, defaultValue = null) {
+                return this.config.has(key) ? this.config.get(key) : defaultValue;
+            },
+
+            saveConfig() {
+                localStorage.setItem('system_config', 
+                    JSON.stringify(Array.from(this.config.entries())));
+            },
+
+            loadConfig() {
+                const saved = localStorage.getItem('system_config');
+                if (saved) {
+                    this.config = new Map(JSON.parse(saved));
+                }
+            }
+        };
+
+        // 安全设置控制
+        const securitySettings = {
+            passwordPolicy: {
+                minLength: 8,
+                requireUppercase: true,
+                requireLowercase: true,
+                requireNumbers: true,
+                requireSpecial: true,
+                maxAge: 90 // 密码有效期（天）
+            },
+
+            sessionPolicy: {
+                maxDuration: 3600, // 会话最大持续时间（秒）
+                inactivityTimeout: 900, // 不活动超时时间（秒）
+                maxConcurrentSessions: 3 // 最大并发会话数
+            },
+
+            validatePassword(password) {
+                const checks = {
+                    length: password.length >= this.passwordPolicy.minLength,
+                    uppercase: !this.passwordPolicy.requireUppercase || /[A-Z]/.test(password),
+                    lowercase: !this.passwordPolicy.requireLowercase || /[a-z]/.test(password),
+                    numbers: !this.passwordPolicy.requireNumbers || /\d/.test(password),
+                    special: !this.passwordPolicy.requireSpecial || /[^A-Za-z0-9]/.test(password)
+                };
+                return Object.values(checks).every(check => check === true);
+            }
+        };
+
+        // 备份控制
+        const backupControl = {
+            schedules: new Map(),
+
+            addSchedule(name, interval) {
+                this.schedules.set(name, {
+                    interval,
+                    lastRun: null,
+                    nextRun: new Date(Date.now() + interval)
+                });
+                this.saveSchedules();
+            },
+
+            runScheduledBackups() {
+                const now = new Date();
+                for (const [name, schedule] of this.schedules.entries()) {
+                    if (now >= schedule.nextRun) {
+                        this.performBackup(name);
+                        schedule.lastRun = now;
+                        schedule.nextRun = new Date(now.getTime() + schedule.interval);
+                    }
+                }
+                this.saveSchedules();
+            },
+
+            saveSchedules() {
+                localStorage.setItem('backup_schedules', 
+                    JSON.stringify(Array.from(this.schedules.entries())));
+            }
+        };
+    </script>
+</body>
+</html> 

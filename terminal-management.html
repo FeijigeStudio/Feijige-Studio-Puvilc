@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Management - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #2d2d2d;
+            padding: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #404040;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .terminal {
+            background-color: #000;
+            border-radius: 5px;
+            padding: 20px;
+            flex: 1;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-y: auto;
+            margin-bottom: 80px;
+        }
+
+        .terminal-output {
+            color: #0f0;
+            margin: 0;
+            padding: 0;
+            min-height: 300px;
+        }
+
+        .command-input-container {
+            position: fixed;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            background-color: #2d2d2d;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .command-prompt {
+            color: #0f0;
+            margin-right: 10px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .command-input {
+            background-color: transparent;
+            border: none;
+            color: #0f0;
+            flex: 1;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .command-history {
+            background-color: #2d2d2d;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .history-title {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .history-item {
+            padding: 5px 0;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .history-item:hover {
+            color: #fff;
+        }
+
+        .command-suggestions {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            background-color: #2d2d2d;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            padding: 10px;
+            display: none;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+
+        .suggestion-item {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #404040;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .lang-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 id="adminTitle">Admin Panel</h2>
+            <ul class="sidebar-menu">
+                <li><a href="index.html" id="menuHome">Back to Home</a></li>
+                <li><a href="admin-dashboard.html" id="menuDashboard">Dashboard</a></li>
+                <li><a href="users-management.html" id="menuUsers">Users</a></li>
+                <li><a href="comments-management.html" id="menuComments">Comments</a></li>
+                <li><a href="settings.html" id="menuSettings">Settings</a></li>
+                <li><a href="terminal-management.html" id="menuTerminal">Terminal</a></li>
+                <li><a href="login-admin-feijigestudio.html" id="menuLogout" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="language-switcher">
+                <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+                <button class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+            </div>
+
+            <div class="terminal">
+                <div id="terminalOutput" class="terminal-output"></div>
+            </div>
+
+            <div class="command-input-container">
+                <span class="command-prompt">$</span>
+                <input type="text" id="commandInput" class="command-input" 
+                       placeholder="Enter command..." onkeydown="handleCommand(event)">
+                <div id="commandSuggestions" class="command-suggestions"></div>
+            </div>
+
+            <div class="command-history">
+                <h3 class="history-title" id="historyTitle">Command History</h3>
+                <ul id="historyList" class="history-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                adminPanel: "Admin Panel",
+                backToHome: "Back to Home",
+                dashboard: "Dashboard",
+                users: "Users",
+                comments: "Comments",
+                settings: "Settings",
+                terminal: "Terminal",
+                logout: "Logout",
+                commandHistory: "Command History",
+                enterCommand: "Enter command...",
+                invalidCommand: "Invalid command. Type 'help' for available commands.",
+                commandNotFound: "Command not found",
+                accessDenied: "Access denied",
+                help: `
+                    Available commands:
+                    help     - Show this help message
+                    clear    - Clear terminal
+                    sudo     - Execute command with admin privileges
+                    ls      - List directory contents
+                    cd      - Change directory
+                    cat     - Display file contents
+                    rm      - Remove file
+                    mkdir   - Create directory
+                    pwd     - Print working directory
+                `
+            },
+            zh: {
+                adminPanel: "管理面板",
+                backToHome: "返回主页",
+                dashboard: "仪表盘",
+                users: "用户管理",
+                comments: "评论管理",
+                settings: "设置",
+                terminal: "终端",
+                logout: "退出登录",
+                commandHistory: "命令历史",
+                enterCommand: "输入命令...",
+                invalidCommand: "无效命令。输入 'help' 查看可用命令。",
+                commandNotFound: "命令未找到",
+                accessDenied: "访问被拒绝",
+                help: `
+                    可用命令：
+                    help     - 显示帮助信息
+                    clear    - 清空终端
+                    sudo     - 使用管理员权限执行命令
+                    ls      - 列出目录内容
+                    cd      - 切换目录
+                    cat     - 显示文件内容
+                    rm      - 删除文件
+                    mkdir   - 创建目录
+                    pwd     - 显示当前工作目录
+                `
+            }
+        };
+
+        let currentLang = localStorage.getItem('adminLang') || 'en';
+        let commandHistory = [];
+        let historyIndex = -1;
+
+        const commands = {
+            help: () => {
+                printOutput(translations[currentLang].help);
+            },
+            clear: () => {
+                document.getElementById('terminalOutput').innerHTML = '';
+            },
+            sudo: (args) => {
+                if (!args.length) {
+                    printOutput('Usage: sudo <command>');
+                    return;
+                }
+                const command = args[0];
+                const commandArgs = args.slice(1);
+                
+                // 检查是否是有效的命令
+                if (commands[command]) {
+                    // 执行命令时添加管理员权限
+                    printOutput(`Executing ${command} with admin privileges...`);
+                    commands[command](commandArgs);
+                } else {
+                    printOutput(`Command not found: ${command}`);
+                }
+            },
+            ls: () => {
+                printOutput(`
+                    Directory listing:
+                    users/
+                    comments/
+                    settings/
+                    logs/
+                    backups/
+                `);
+            },
+            cd: (args) => {
+                if (!args.length) {
+                    printOutput('Usage: cd <directory>');
+                    return;
+                }
+                printOutput(`Changed directory to ${args[0]}`);
+            },
+            cat: (args) => {
+                if (!args.length) {
+                    printOutput('Usage: cat <filename>');
+                    return;
+                }
+                printOutput(`Reading file ${args[0]}...`);
+            },
+            rm: (args) => {
+                if (!args.length) {
+                    printOutput('Usage: rm <filename>');
+                    return;
+                }
+                printOutput(`Removing ${args[0]}...`);
+            },
+            mkdir: (args) => {
+                if (!args.length) {
+                    printOutput('Usage: mkdir <directory>');
+                    return;
+                }
+                printOutput(`Creating directory ${args[0]}...`);
+            },
+            pwd: () => {
+                printOutput('/admin/dashboard');
+            }
+        };
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('adminLang', lang);
+            updateTranslations();
+        }
+
+        function updateTranslations() {
+            document.getElementById('adminTitle').textContent = translations[currentLang].adminPanel;
+            document.getElementById('menuHome').textContent = translations[currentLang].backToHome;
+            document.getElementById('menuDashboard').textContent = translations[currentLang].dashboard;
+            document.getElementById('menuUsers').textContent = translations[currentLang].users;
+            document.getElementById('menuComments').textContent = translations[currentLang].comments;
+            document.getElementById('menuSettings').textContent = translations[currentLang].settings;
+            document.getElementById('menuTerminal').textContent = translations[currentLang].terminal;
+            document.getElementById('menuLogout').textContent = translations[currentLang].logout;
+            document.getElementById('historyTitle').textContent = translations[currentLang].commandHistory;
+            document.getElementById('commandInput').placeholder = translations[currentLang].enterCommand;
+        }
+
+        function handleCommand(event) {
+            if (event.key === 'Enter') {
+                const input = event.target.value.trim();
+                if (!input) return;
+
+                // 添加到历���记录
+                commandHistory.unshift(input);
+                if (commandHistory.length > 50) commandHistory.pop();
+                historyIndex = -1;
+                updateCommandHistory();
+
+                // 执行命令
+                executeCommand(input);
+                event.target.value = '';
+            } else if (event.key === 'ArrowUp') {
+                event.preventDefault();
+                navigateHistory(1);
+            } else if (event.key === 'ArrowDown') {
+                event.preventDefault();
+                navigateHistory(-1);
+            } else if (event.key === 'Tab') {
+                event.preventDefault();
+                showCommandSuggestions();
+            }
+        }
+
+        function executeCommand(input) {
+            // 先添加一个空行
+            printOutput('');
+            // 显示命令
+            printOutput(`> ${input}`);
+            const args = input.trim().split(/\s+/);
+            const cmd = args[0].toLowerCase();
+            const cmdArgs = args.slice(1);
+
+            if (commands[cmd]) {
+                commands[cmd](cmdArgs);
+            } else {
+                printOutput(translations[currentLang].invalidCommand);
+            }
+            // 命令执行完后再添加一个空行
+            printOutput('');
+        }
+
+        function printOutput(text) {
+            const output = document.getElementById('terminalOutput');
+            // 添加换行符，确保每个命令输出都在新行开始
+            if (output.innerHTML && !output.innerHTML.endsWith('\n\n')) {
+                output.innerHTML += '\n';
+            }
+            output.innerHTML += text + '\n';
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function updateCommandHistory() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = commandHistory
+                .map(cmd => `<li class="history-item" onclick="useHistoryCommand('${cmd}')">${cmd}</li>`)
+                .join('');
+        }
+
+        function useHistoryCommand(command) {
+            document.getElementById('commandInput').value = command;
+            document.getElementById('commandInput').focus();
+        }
+
+        function navigateHistory(direction) {
+            if (!commandHistory.length) return;
+
+            historyIndex += direction;
+            if (historyIndex >= commandHistory.length) {
+                historyIndex = commandHistory.length - 1;
+            } else if (historyIndex < -1) {
+                historyIndex = -1;
+            }
+
+            const input = document.getElementById('commandInput');
+            input.value = historyIndex === -1 ? '' : commandHistory[historyIndex];
+        }
+
+        function showCommandSuggestions() {
+            const input = document.getElementById('commandInput').value;
+            const suggestions = Object.keys(commands).filter(cmd => cmd.startsWith(input));
+            
+            if (suggestions.length === 1) {
+                document.getElementById('commandInput').value = suggestions[0];
+                return;
+            }
+
+            const suggestionsDiv = document.getElementById('commandSuggestions');
+            if (suggestions.length > 1) {
+                suggestionsDiv.innerHTML = suggestions
+                    .map(s => `<div class="suggestion-item" onclick="useHistoryCommand('${s}')">${s}</div>`)
+                    .join('');
+                suggestionsDiv.style.display = 'block';
+            } else {
+                suggestionsDiv.style.display = 'none';
+            }
+        }
+
+        // 检查登录状态
+        function checkAdminLogin() {
+            const isAdmin = sessionStorage.getItem('adminLoggedIn');
+            if (!isAdmin) {
+                window.location.href = 'login-admin-feijigestudio.html';
+                return;
+            }
+        }
+
+        // 登出功能
+        function handleLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('user_id');
+            sessionStorage.removeItem('username');
+            window.location.href = 'login-admin-feijigestudio.html';
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminLogin();
+            switchLanguage(currentLang);
+            document.getElementById('commandInput').focus();
+        });
+
+        // 点击页面任意位置关闭命令建议
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#commandSuggestions')) {
+                document.getElementById('commandSuggestions').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

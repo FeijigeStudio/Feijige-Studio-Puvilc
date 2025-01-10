@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Interface</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        :root {
+            --container-width: 90%;
+            --container-max-width: 800px;
+            --container-height: 70vh;
+            --sidebar-width: 250px;
+            --font-size-base: 14px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-size: var(--font-size-base) !important;
+        }
+
+        .container {
+            display: flex !important;
+            width: var(--container-width) !important;
+            max-width: var(--container-max-width) !important;
+            height: var(--container-height) !important;
+            margin: auto;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 1000 !important;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width) !important;
+            background-color: #f8f9fa;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #user-info {
+            padding: 20px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #user-info h2 {
+            font-size: 1.2em;
+            margin: 0 0 10px 0;
+        }
+
+        #chat-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+        #main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chat-window {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background-color: #e9ebee;
+        }
+
+        #input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+        }
+
+        .chat-item {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            transition: background-color 0.3s;
+            font-size: var(--font-size-base);
+        }
+
+        .chat-item:hover {
+            background-color: #e0e0e0;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            display: flex;
+            font-size: var(--font-size-base);
+        }
+
+        .message.sent {
+            justify-content: flex-end;
+        }
+
+        .message.received {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 60%;
+            word-wrap: break-word;
+            font-size: var(--font-size-base);
+        }
+
+        .message.sent .message-content {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .message.received .message-content {
+            background-color: #fff;
+        }
+
+        #message-input {
+            flex-grow: 1;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            font-size: var(--font-size-base);
+        }
+
+        #send-button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 400px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: var(--font-size-base);
+        }
+
+        #send-button:hover {
+            background-color: #0056b3;
+        }
+
+        #add-friend {
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 5px;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        #add-friend:hover {
+            background-color: #218838;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .modal-content h2 {
+            font-size: 1.4em;
+            margin: 0 0 20px 0;
+            color: #333;
+        }
+
+        #friend-uid {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            font-size: var(--font-size-base);
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #friend-uid:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.2);
+        }
+
+        #submit-add-friend {
+            padding: 10px 15px;
+            font-size: var(--font-size-base);
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        /* 搜索建议样式 */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+            margin-top: 5px;
+        }
+
+        .search-suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <!-- The rest of the HTML remains unchanged -->
+    <div class="container">
+        <div id="sidebar">
+            <div id="user-info">
+                <h2>Welcome, <span id="username"></span></h2>
+                <button id="add-friend">Add Friend</button>
+            </div>
+            <div id="chat-list">
+                <!-- Chat list will be populated dynamically -->
+            </div>
+        </div>
+        <div id="main">
+            <div id="chat-window">
+                <!-- Messages will be displayed here -->
+            </div>
+            <div id="input-area">
+                <input type="text" id="message-input" placeholder="Type a message...">
+                <button id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="add-friend-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Friend</h2>
+            <input type="text" id="friend-uid" placeholder="Enter friend's UID">
+            <button id="submit-add-friend">Add</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        // The JavaScript code remains unchanged
+        const socket = io();
+        let currentChat = null;
+        let currentUser = null;
+
+        // Simulating user login (replace with actual login system)
+        const username = prompt("Enter your username:");
+        document.getElementById('username').textContent = username;
+
+        socket.emit('login', username);
+
+        socket.on('login_response', (data) => {
+            currentUser = data.user;
+            updateChatList(data.friends);
+        });
+
+        socket.on('update_chat_list', (friends) => {
+            updateChatList(friends);
+        });
+
+        socket.on('chat_message', (data) => {
+            if (data.chat === currentChat) {
+                addMessage(data.sender, data.message);
+            }
+        });
+
+        function updateChatList(friends) {
+            const chatList = document.getElementById('chat-list');
+            chatList.innerHTML = '';
+            friends.forEach(friend => {
+                const chatItem = document.createElement('div');
+                chatItem.className = 'chat-item';
+                chatItem.textContent = friend.username;
+                chatItem.onclick = () => selectChat(friend.username);
+                chatList.appendChild(chatItem);
+            });
+        }
+
+        function selectChat(chat) {
+            currentChat = chat;
+            document.getElementById('chat-window').innerHTML = '';
+            // Here you would typically load previous messages for this chat
+        }
+
+        function addMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender === currentUser.username ? 'sent' : 'received'}`;
+            messageDiv.innerHTML = `<span class="message-content">${message}</span>`;
+            document.getElementById('chat-window').appendChild(messageDiv);
+            document.getElementById('chat-window').scrollTop = document.getElementById('chat-window').scrollHeight;
+        }
+
+        document.getElementById('send-button').onclick = sendMessage;
+        document.getElementById('message-input').onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (message && currentChat) {
+                socket.emit('send_message', { recipient: currentChat, message: message });
+                addMessage(currentUser.username, message);
+                input.value = '';
+            }
+        }
+
+        // Add friend functionality
+        const addFriendBtn = document.getElementById('add-friend');
+        const addFriendModal = document.getElementById('add-friend-modal');
+        const closeModal = document.getElementsByClassName('close')[0];
+        const submitAddFriend = document.getElementById('submit-add-friend');
+
+        addFriendBtn.onclick = () => {
+            window.location.href = 'search-friends.html';
+        }
+
+        closeModal.onclick = () => {
+            addFriendModal.style.display = 'none';
+        }
+
+        window.onclick = (event) => {
+            if (event.target == addFriendModal) {
+                addFriendModal.style.display = 'none';
+            }
+        }
+
+        submitAddFriend.onclick = () => {
+            const friendUID = document.getElementById('friend-uid').value.trim();
+            if (friendUID) {
+                socket.emit('add_friend', { uid: friendUID });
+                addFriendModal.style.display = 'none';
+                document.getElementById('friend-uid').value = '';
+            }
+        }
+
+        socket.on('add_friend_response', (response) => {
+            if (response.success) {
+                alert('Friend added successfully!');
+                updateChatList(response.friends);
+            } else {
+                alert('Failed to add friend: ' + response.message);
+            }
+        });
+
+        // 搜索建议功能
+        const friendInput = document.getElementById('friend-uid');
+        const suggestionsDiv = document.createElement('div');
+        suggestionsDiv.className = 'search-suggestions';
+        friendInput.parentNode.insertBefore(suggestionsDiv, friendInput.nextSibling);
+
+        friendInput.addEventListener('input', function() {
+            const searchTerm = this.value.trim().toLowerCase();
+            if (searchTerm.length > 0) {
+                // 这里可以替换为实际的API调用
+                const suggestions = ['User1', 'User2', 'User3'].filter(user => 
+                    user.toLowerCase().includes(searchTerm)
+                );
+                
+                suggestionsDiv.innerHTML = suggestions.map(user => 
+                    `<div class="suggestion-item">${user}</div>`
+                ).join('');
+                
+                suggestionsDiv.classList.add('active');
+            } else {
+                suggestionsDiv.classList.remove('active');
+            }
+        });
+
+        // 点击建议项
+        suggestionsDiv.addEventListener('click', function(e) {
+            if (e.target.classList.contains('suggestion-item')) {
+                friendInput.value = e.target.textContent;
+                suggestionsDiv.classList.remove('active');
+            }
+        });
+
+        // 点击外部关闭建议
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#friend-uid') && !e.target.closest('.search-suggestions')) {
+                suggestionsDiv.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

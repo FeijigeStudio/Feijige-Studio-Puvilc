@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comments Management - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar-menu a:hover {
+            background-color: #333;
+        }
+
+        .comments-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        .comments-table th, .comments-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .comments-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .comment-content {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .action-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .approve-btn {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .approve-btn:hover { background-color: #218838; }
+        .reject-btn:hover { background-color: #c82333; }
+        .delete-btn:hover { background-color: #5a6268; }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .language-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .lang-btn {
+            padding: 5px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .lang-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .terminal-btn {
+            padding: 8px 15px;
+            background-color: #1a1a1a;
+            color: #0f0;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-family: 'Courier New', Courier, monospace;
+            transition: all 0.3s;
+        }
+
+        .terminal-btn:hover {
+            background-color: #0f0;
+            color: #1a1a1a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2 id="adminTitle">Admin Panel</h2>
+            <ul class="sidebar-menu">
+                <li><a href="index.html" id="menuHome">Back to Home</a></li>
+                <li><a href="admin-dashboard.html" id="menuDashboard">Dashboard</a></li>
+                <li><a href="users-management.html" id="menuUsers">Users</a></li>
+                <li><a href="comments-management.html" id="menuComments">Comments</a></li>
+                <li><a href="settings.html" id="menuSettings">Settings</a></li>
+                <li><a href="terminal-management.html" id="menuTerminal">Terminal</a></li>
+                <li><a href="login-admin-feijigestudio.html" id="menuLogout" onclick="handleLogout()">Logout</a></li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="language-switcher">
+                <button class="lang-btn" onclick="switchLanguage('en')">English</button>
+                <button class="lang-btn" onclick="switchLanguage('zh')">中文</button>
+            </div>
+
+            <h1 id="pageTitle">Comments Management</h1>
+
+            <div class="toolbar">
+                <button class="terminal-btn" onclick="window.location.href='terminal-management.html'">
+                    $ Terminal
+                </button>
+            </div>
+
+            <table class="comments-table">
+                <thead>
+                    <tr>
+                        <th id="thId">ID</th>
+                        <th id="thUser">User</th>
+                        <th id="thProject">Project</th>
+                        <th id="thComment">Comment</th>
+                        <th id="thDate">Date</th>
+                        <th id="thStatus">Status</th>
+                        <th id="thActions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="commentsTableBody">
+                    <!-- Data will be loaded dynamically -->
+                </tbody>
+            </table>
+
+            <div class="right-sidebar">
+                <div class="terminal-header">
+                    <h3 class="terminal-title">Terminal</h3>
+                    <button class="expand-btn" onclick="window.location.href='terminal-management.html'">
+                        Expand
+                    </button>
+                </div>
+                <div class="terminal-preview" id="terminalPreview">
+                    <!-- Terminal output will be shown here -->
+                </div>
+                <input type="text" class="terminal-input" 
+                       placeholder="Enter command..." 
+                       onkeydown="handleTerminalCommand(event)"
+                       id="terminalInput">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            en: {
+                adminPanel: "Admin Panel",
+                backToHome: "Back to Home",
+                dashboard: "Dashboard",
+                users: "Users",
+                comments: "Comments",
+                settings: "Settings",
+                logout: "Logout",
+                commentsManagement: "Comments Management",
+                id: "ID",
+                user: "User",
+                project: "Project",
+                comment: "Comment",
+                date: "Date",
+                status: "Status",
+                actions: "Actions",
+                approve: "Approve",
+                reject: "Reject",
+                delete: "Delete",
+                commentStatus: {
+                    pending: "Pending",
+                    approved: "Approved",
+                    rejected: "Rejected"
+                },
+                confirmDelete: "Are you sure you want to delete this comment?",
+                confirmApprove: "Are you sure you want to approve this comment?",
+                confirmReject: "Are you sure you want to reject this comment?",
+                loading: "Loading...",
+                noComments: "No comments found",
+                errorLoading: "Error loading comments"
+            },
+            zh: {
+                adminPanel: "管理面板",
+                backToHome: "返回主页",
+                dashboard: "仪表盘",
+                users: "用户管理",
+                comments: "评论管理",
+                settings: "设置",
+                logout: "退出登录",
+                commentsManagement: "评论管理",
+                id: "编号",
+                user: "用户",
+                project: "项目",
+                comment: "评论内容",
+                date: "日期",
+                status: "状态",
+                actions: "操作",
+                approve: "通过",
+                reject: "拒绝",
+                delete: "删除",
+                commentStatus: {
+                    pending: "待审核",
+                    approved: "已通过",
+                    rejected: "已拒绝"
+                },
+                confirmDelete: "确定要删除这条评论吗？",
+                confirmApprove: "确定要通过这条评论吗？",
+                confirmReject: "确定要拒绝这条评论吗？",
+                loading: "加载中...",
+                noComments: "暂无评论",
+                errorLoading: "加载评论失败"
+            }
+        };
+
+        let currentLang = localStorage.getItem('adminLang') || 'en';
+
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('adminLang', lang);
+            updateTranslations();
+            fetchComments();
+        }
+
+        function updateTranslations() {
+            // 更新侧边栏
+            document.getElementById('adminTitle').textContent = translations[currentLang].adminPanel;
+            document.getElementById('menuHome').textContent = translations[currentLang].backToHome;
+            document.getElementById('menuDashboard').textContent = translations[currentLang].dashboard;
+            document.getElementById('menuUsers').textContent = translations[currentLang].users;
+            document.getElementById('menuComments').textContent = translations[currentLang].comments;
+            document.getElementById('menuSettings').textContent = translations[currentLang].settings;
+            document.getElementById('menuLogout').textContent = translations[currentLang].logout;
+
+            // 更新页面标题和表格头部
+            document.getElementById('pageTitle').textContent = translations[currentLang].commentsManagement;
+            document.getElementById('thId').textContent = translations[currentLang].id;
+            document.getElementById('thUser').textContent = translations[currentLang].user;
+            document.getElementById('thProject').textContent = translations[currentLang].project;
+            document.getElementById('thComment').textContent = translations[currentLang].comment;
+            document.getElementById('thDate').textContent = translations[currentLang].date;
+            document.getElementById('thStatus').textContent = translations[currentLang].status;
+            document.getElementById('thActions').textContent = translations[currentLang].actions;
+
+            // 如果有错误消息或加载提示，也更新它们
+            const loadingElements = document.querySelectorAll('.loading-message');
+            loadingElements.forEach(el => {
+                el.textContent = translations[currentLang].loading;
+            });
+
+            const errorElements = document.querySelectorAll('.error-message');
+            errorElements.forEach(el => {
+                el.textContent = translations[currentLang].errorLoading;
+            });
+
+            const noCommentsElements = document.querySelectorAll('.no-comments-message');
+            noCommentsElements.forEach(el => {
+                el.textContent = translations[currentLang].noComments;
+            });
+        }
+
+        async function fetchComments() {
+            try {
+                const response = await fetch('/api/admin/comments');
+                const data = await response.json();
+                updateCommentsTable(data);
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+                // 使用示例数据
+                updateCommentsTable([
+                    {
+                        id: 1,
+                        username: "user1",
+                        project: "Project A",
+                        content: "Great project! Looking forward to more updates.",
+                        date: "2024-03-20",
+                        status: "pending"
+                    },
+                    {
+                        id: 2,
+                        username: "user2",
+                        project: "Project B",
+                        content: "Very interesting approach to solving this problem.",
+                        date: "2024-03-19",
+                        status: "approved"
+                    }
+                ]);
+            }
+        }
+
+        function updateCommentsTable(comments) {
+            const tableBody = document.getElementById('commentsTableBody');
+            tableBody.innerHTML = comments.map(comment => `
+                <tr>
+                    <td>${comment.id}</td>
+                    <td>${comment.username}</td>
+                    <td>${comment.project}</td>
+                    <td class="comment-content">${comment.content}</td>
+                    <td>${comment.date}</td>
+                    <td>
+                        <span class="status-badge status-${comment.status}">
+                            ${translations[currentLang].commentStatus[comment.status]}
+                        </span>
+                    </td>
+                    <td>
+                        ${comment.status === 'pending' ? `
+                            <button class="action-button approve-btn" onclick="approveComment(${comment.id})">${translations[currentLang].approve}</button>
+                            <button class="action-button reject-btn" onclick="rejectComment(${comment.id})">${translations[currentLang].reject}</button>
+                        ` : ''}
+                        <button class="action-button delete-btn" onclick="deleteComment(${comment.id})">${translations[currentLang].delete}</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteComment(commentId) {
+            if (confirm(translations[currentLang].confirmDelete)) {
+                try {
+                    const response = await fetch(`/api/admin/comments/${commentId}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        fetchComments();
+                    }
+                } catch (error) {
+                    console.error('Error deleting comment:', error);
+                }
+            }
+        }
+
+        async function approveComment(commentId) {
+            if (confirm(translations[currentLang].confirmApprove)) {
+                try {
+                    const response = await fetch(`/api/admin/comments/${commentId}/approve`, {
+                        method: 'POST'
+                    });
+                    if (response.ok) {
+                        fetchComments();
+                    }
+                } catch (error) {
+                    console.error('Error approving comment:', error);
+                }
+            }
+        }
+
+        async function rejectComment(commentId) {
+            if (confirm(translations[currentLang].confirmReject)) {
+                try {
+                    const response = await fetch(`/api/admin/comments/${commentId}/reject`, {
+                        method: 'POST'
+                    });
+                    if (response.ok) {
+                        fetchComments();
+                    }
+                } catch (error) {
+                    console.error('Error rejecting comment:', error);
+                }
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            sessionStorage.removeItem('user_id');
+            sessionStorage.removeItem('username');
+            window.location.href = 'login-admin-feijigestudio.html';
+        }
+
+        // 修改检查登录状态的函数
+        function checkAdminLogin() {
+            const isAdmin = sessionStorage.getItem('adminLoggedIn');
+            const referrer = document.referrer;
+            
+            // 如果没有管理员登录状态，直接跳转到登录页
+            if (!isAdmin) {
+                window.location.href = 'login-admin-feijigestudio.html';
+                return;
+            }
+        }
+
+        // 页面加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAdminLogin();
+            switchLanguage(currentLang);
+            fetchComments();
+        });
+
+        // 批量审核评论功能
+        async function bulkApproveComments() {
+            const selectedComments = document.querySelectorAll('.comment-checkbox:checked');
+            const ids = Array.from(selectedComments).map(cb => cb.value);
+            
+            try {
+                for (let id of ids) {
+                    await fetch(`/api/admin/comments/${id}/approve`, {
+                        method: 'POST'
+                    });
+                }
+                showNotification(translations[currentLang].bulkApproveSuccess);
+                fetchComments();
+            } catch (error) {
+                showNotification(translations[currentLang].bulkApproveError, 'error');
+            }
+        }
+
+        // 评论搜索功能
+        function searchComments(query) {
+            const comments = document.querySelectorAll('#commentsTableBody tr');
+            comments.forEach(comment => {
+                const text = comment.textContent.toLowerCase();
+                comment.style.display = text.includes(query.toLowerCase()) ? '' : 'none';
+            });
+        }
+
+        // 评论过滤功能
+        function filterComments(status) {
+            const comments = document.querySelectorAll('#commentsTableBody tr');
+            comments.forEach(comment => {
+                if (status === 'all') {
+                    comment.style.display = '';
+                } else {
+                    const commentStatus = comment.querySelector('.status-badge').dataset.status;
+                    comment.style.display = commentStatus === status ? '' : 'none';
+                }
+            });
+        }
+
+        // 评论排序功能
+        function sortComments(column) {
+            const tbody = document.getElementById('commentsTableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            rows.sort((a, b) => {
+                const aValue = a.children[column].textContent;
+                const bValue = b.children[column].textContent;
+                return aValue.localeCompare(bValue);
+            });
+            
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // 评论内容预览功能
+        function previewComment(content) {
+            const modal = document.createElement('div');
+            modal.className = 'preview-modal';
+            modal.innerHTML = `
+                <div class="preview-content">
+                    <h3>${translations[currentLang].commentPreview}</h3>
+                    <p>${content}</p>
+                    <button onclick="this.parentElement.parentElement.remove()">
+                        ${translations[currentLang].close}
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // 批量拒绝评论功能
+        async function bulkRejectComments() {
+            const selectedComments = document.querySelectorAll('.comment-checkbox:checked');
+            const ids = Array.from(selectedComments).map(cb => cb.value);
+            
+            try {
+                for (let id of ids) {
+                    await fetch(`/api/admin/comments/${id}/reject`, {
+                        method: 'POST'
+                    });
+                }
+                showNotification(translations[currentLang].bulkRejectSuccess);
+                fetchComments();
+            } catch (error) {
+                showNotification(translations[currentLang].bulkRejectError, 'error');
+            }
+        }
+
+        // 评论统计功能
+        function getCommentsStats() {
+            const comments = document.querySelectorAll('#commentsTableBody tr');
+            const stats = {
+                total: comments.length,
+                pending: 0,
+                approved: 0,
+                rejected: 0
+            };
+
+            comments.forEach(comment => {
+                const status = comment.querySelector('.status-badge').dataset.status;
+                stats[status]++;
+            });
+
+            return stats;
+        }
+
+        // 显示评论统计
+        function displayCommentsStats() {
+            const stats = getCommentsStats();
+            const statsHtml = `
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">${translations[currentLang].totalComments}</span>
+                        <span class="stat-value">${stats.total}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">${translations[currentLang].pendingComments}</span>
+                        <span class="stat-value">${stats.pending}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">${translations[currentLang].approvedComments}</span>
+                        <span class="stat-value">${stats.approved}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">${translations[currentLang].rejectedComments}</span>
+                        <span class="stat-value">${stats.rejected}</span>
+                    </div>
+                </div>
+            `;
+            
+            const statsContainer = document.getElementById('statsContainer');
+            if (statsContainer) {
+                statsContainer.innerHTML = statsHtml;
+            }
+        }
+
+        // 评论内容审核功能（敏感词过滤）
+        function checkCommentContent(content) {
+            const sensitiveWords = ['spam', 'abuse', 'hate', 'violence']; // 可以从服务器获取
+            let hasSensitiveWord = false;
+            sensitiveWords.forEach(word => {
+                if (content.toLowerCase().includes(word)) {
+                    hasSensitiveWord = true;
+                }
+            });
+            return !hasSensitiveWord;
+        }
+
+        // 评论频率控制
+        const commentLimits = {
+            checkCommentFrequency(userId) {
+                const userComments = JSON.parse(localStorage.getItem(`comments_${userId}`) || '[]');
+                const now = new Date().getTime();
+                const recentComments = userComments.filter(c => 
+                    (now - new Date(c.timestamp).getTime()) < 3600000 // 1小时内
+                );
+                return recentComments.length < 10; // 每小时限制10条评论
+            },
+            
+            recordComment(userId) {
+                const userComments = JSON.parse(localStorage.getItem(`comments_${userId}`) || '[]');
+                userComments.push({ timestamp: new Date().toISOString() });
+                localStorage.setItem(`comments_${userId}`, JSON.stringify(userComments));
+            }
+        };
+
+        // 评论黑名单功能
+        const commentBlacklist = {
+            addToBlacklist(userId) {
+                const blacklist = JSON.parse(localStorage.getItem('comment_blacklist') || '[]');
+                if (!blacklist.includes(userId)) {
+                    blacklist.push(userId);
+                    localStorage.setItem('comment_blacklist', JSON.stringify(blacklist));
+                }
+            },
+
+            removeFromBlacklist(userId) {
+                const blacklist = JSON.parse(localStorage.getItem('comment_blacklist') || '[]');
+                const index = blacklist.indexOf(userId);
+                if (index > -1) {
+                    blacklist.splice(index, 1);
+                    localStorage.setItem('comment_blacklist', JSON.stringify(blacklist));
+                }
+            },
+
+            isBlacklisted(userId) {
+                const blacklist = JSON.parse(localStorage.getItem('comment_blacklist') || '[]');
+                return blacklist.includes(userId);
+            }
+        };
+
+        // 评论自动审核规则
+        const autoModeration = {
+            rules: {
+                length: (content) => content.length >= 5 && content.length <= 1000,
+                noUrls: (content) => !content.match(/https?:\/\/[^\s]+/g),
+                noEmails: (content) => !content.match(/[^\s@]+@[^\s@]+\.[^\s@]+/g),
+                noPhone: (content) => !content.match(/\d{10,}/g)
+            },
+
+            checkComment(content) {
+                const results = {};
+                for (const [rule, check] of Object.entries(this.rules)) {
+                    results[rule] = check(content);
+                }
+                return results;
+            },
+
+            shouldAutoApprove(content) {
+                const results = this.checkComment(content);
+                return Object.values(results).every(result => result === true);
+            }
+        };
+    </script>
+</body>
+</html> 

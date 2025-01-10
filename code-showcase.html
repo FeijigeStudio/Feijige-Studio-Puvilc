@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Showcase - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        /* Base styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        
+        /* Code showcase styles */
+        .code-container {
+            display: flex;
+            margin-top: 20px;
+        }
+        .code-main {
+            flex: 3;
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .code-block {
+            background-color: #f6f8fa;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .comments-section {
+            margin-top: 20px;
+        }
+        .comment {
+            background-color: #f6f8fa;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .search-container {
+            position: relative;
+            max-width: 800px;
+            margin: 60px auto 20px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 10px rgba(0,123,255,0.2);
+        }
+        .action-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .btn-subscribe {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-favorite {
+            background-color: #ffd700;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <ul>
+                <li><a href="index.html" class="nav-home">Home</a></li>
+                <li><a href="about.html" class="nav-about">About</a></li>
+                <li><a href="contact.html" class="nav-contact">Contact</a></li>
+                <li><a href="login.html" class="nav-login">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search projects..." id="searchInput">
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-subscribe" onclick="redirectToLogin()">Subscribe</button>
+            <button class="btn btn-favorite" onclick="redirectToLogin()">Favorite</button>
+        </div>
+
+        <h1 class="project-title">Project Name</h1>
+        <p class="project-description">Project description goes here.</p>
+
+        <div class="code-container">
+            <div class="code-main">
+                <div class="code-block">
+                    <pre><code id="codeContent">
+// Code will be loaded here
+                    </code></pre>
+                </div>
+
+                <div class="comments-section">
+                    <h2 class="comments-title">Comments</h2>
+                    <div id="commentsContainer">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simulated database
+        const projectData = {
+            id: 1,
+            name: "Sample Project",
+            description: "This is a sample project showcasing Feijige Studio's features.",
+            code: `function helloWorld() {
+    console.log("Hello, Feijige Studio!");
+}
+
+helloWorld();`,
+            comments: [
+                { id: 1, user: "User1", text: "Great project! Keep up the good work." },
+                { id: 2, user: "User2", text: "I found a small bug in line 15. Can you check it?" }
+            ]
+        };
+
+        // Load project data
+        document.querySelector('.project-title').textContent = projectData.name;
+        document.querySelector('.project-description').textContent = projectData.description;
+        document.getElementById('codeContent').textContent = projectData.code;
+
+        // Load comments
+        const commentsContainer = document.getElementById('commentsContainer');
+        projectData.comments.forEach(comment => {
+            const commentElement = document.createElement('div');
+            commentElement.className = 'comment';
+            commentElement.innerHTML = `<p><strong>${comment.user}:</strong> ${comment.text}</p>`;
+            commentsContainer.appendChild(commentElement);
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            console.log('Searching for:', searchTerm);
+        });
+
+        function redirectToLogin() {
+            window.location.href = 'login.html';
+        }
+
+        function switchLanguage(lang) {
+            const translations = {
+                en: {
+                    home: "Home",
+                    about: "About",
+                    contact: "Contact",
+                    login: "Login",
+                    searchPlaceholder: "Search projects...",
+                    subscribe: "Subscribe",
+                    favorite: "Favorite",
+                    commentsTitle: "Comments"
+                },
+                zh: {
+                    home: "首页",
+                    about: "关于",
+                    contact: "联系我们",
+                    login: "登录",
+                    searchPlaceholder: "搜索项目...",
+                    subscribe: "订阅",
+                    favorite: "收藏",
+                    commentsTitle: "评论"
+                }
+            };
+
+            document.querySelector('.nav-home').textContent = translations[lang].home;
+            document.querySelector('.nav-about').textContent = translations[lang].about;
+            document.querySelector('.nav-contact').textContent = translations[lang].contact;
+            document.querySelector('.nav-login').textContent = translations[lang].login;
+            document.querySelector('.search-input').placeholder = translations[lang].searchPlaceholder;
+            document.querySelector('.comments-title').textContent = translations[lang].commentsTitle;
+            document.querySelector('.btn-subscribe').textContent = translations[lang].subscribe;
+            document.querySelector('.btn-favorite').textContent = translations[lang].favorite;
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Friends - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0,123,255,0.2);
+        }
+
+        .results-container {
+            margin-top: 20px;
+        }
+
+        .user-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: transform 0.2s;
+        }
+
+        .user-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-details h3 {
+            margin: 0;
+            color: #333;
+        }
+
+        .user-details p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .add-button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: #0056b3;
+        }
+
+        .add-button.added {
+            background-color: #28a745;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="chat_interface.html" class="back-button">← Back to Chat</a>
+        
+        <div class="search-box">
+            <input type="text" 
+                   class="search-input" 
+                   placeholder="Search friends by name or ID..." 
+                   id="searchInput">
+        </div>
+
+        <div class="results-container" id="resultsContainer">
+            <!-- Results will be populated dynamically -->
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const resultsContainer = document.getElementById('resultsContainer');
+
+        searchInput.addEventListener('input', async function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                resultsContainer.innerHTML = '';
+                return;
+            }
+
+            try {
+                // 发送搜索请求到服务器
+                const response = await fetch(`/api/search-users?term=${searchTerm}`);
+                const users = await response.json();
+
+                // 显示结果
+                if (users.length > 0) {
+                    resultsContainer.innerHTML = users.map(user => `
+                        <div class="user-card">
+                            <div class="user-info">
+                                <img src="${user.avatar || 'default-avatar.jpg'}" alt="${user.username}" class="user-avatar">
+                                <div class="user-details">
+                                    <h3>${user.username}</h3>
+                                    <p>${user.status || 'Offline'}</p>
+                                </div>
+                            </div>
+                            <button class="add-button" onclick="addFriend('${user.id}', this)">Add Friend</button>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsContainer.innerHTML = `
+                        <div class="no-results">
+                            No users found matching "${searchTerm}"
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error searching users:', error);
+                resultsContainer.innerHTML = `
+                    <div class="no-results">
+                        Error searching users. Please try again.
+                    </div>
+                `;
+            }
+        });
+
+        async function addFriend(userId, button) {
+            try {
+                // 发送添加好友请求到服务器
+                const response = await fetch('/api/add-friend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ friendId: userId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    button.textContent = 'Added';
+                    button.classList.add('added');
+                    button.disabled = true;
+                } else {
+                    alert(result.message || 'Failed to add friend');
+                }
+            } catch (error) {
+                console.error('Error adding friend:', error);
+                alert('Error adding friend. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 

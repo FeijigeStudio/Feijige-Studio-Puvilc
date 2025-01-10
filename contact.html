@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        nav ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+        .contact-form {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group textarea {
+            height: 150px;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <ul>
+                <li><a href="index-logged-in.html" class="nav-home">Home</a></li>
+                <li><a href="about.html" class="nav-about">About</a></li>
+                <li><a href="contact.html" class="nav-contact">Contact</a></li>
+                 <li><a href="chat_interface.html"class="chat-interface">Chat</a></li>
+                <li><a href="chat.html"class="chat-AI">chat-AI</a></li>
+                <li><a href="upload.html" class="nav-upload">Upload</a></li>
+                <li>
+                    <div class="user-profile">
+                        <img src="avatar-placeholder.jpg" alt="User Avatar" class="avatar" onclick="location.href='profile.html'">
+                        <a href="index.html" class="nav-logout">Logout</a>
+                    </div>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <form class="contact-form">
+            <h2 class="contact-title">Contact Us</h2>
+            <div class="form-group">
+                <label for="name" class="name-label">Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email" class="email-label">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message" class="message-label">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            <button type="submit" class="submit-btn">Send</button>
+        </form>
+    </main>
+
+    <script>
+        function switchLanguage(lang) {
+            const translations = {
+                en: {
+                    home: "Home",
+                    about: "About",
+                    contact: "Contact",
+                    login: "Login",
+                    contactTitle: "Contact Us",
+                    nameLabel: "Name:",
+                    emailLabel: "Email:",
+                    messageLabel: "Message:",
+                    submitButton: "Send"
+                },
+                zh: {
+                    home: "首页",
+                    about: "关于",
+                    contact: "联系我们",
+                    login: "登录",
+                    contactTitle: "联系我们",
+                    nameLabel: "姓名：",
+                    emailLabel: "电子邮箱：",
+                    messageLabel: "留言：",
+                    submitButton: "发送"
+                }
+            };
+
+            document.querySelector('.nav-home').textContent = translations[lang].home;
+            document.querySelector('.nav-about').textContent = translations[lang].about;
+            document.querySelector('.nav-contact').textContent = translations[lang].contact;
+            document.querySelector('.nav-login').textContent = translations[lang].login;
+            document.querySelector('.contact-title').textContent = translations[lang].contactTitle;
+            document.querySelector('.name-label').textContent = translations[lang].nameLabel;
+            document.querySelector('.email-label').textContent = translations[lang].emailLabel;
+            document.querySelector('.message-label').textContent = translations[lang].messageLabel;
+            document.querySelector('.submit-btn').textContent = translations[lang].submitButton;
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  # MySQL 服务
+  db:
+    image: mysql:8.0
+    container_name: feijigestudio_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: fjg1145145
+      MYSQL_DATABASE: feijigestudio
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    networks:
+      - feijigestudio_network
+
+  # Node.js 应用服务
+  app:
+    build: .
+    container_name: feijigestudio_app
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USER: root
+      DB_PASSWORD: fjg1145145
+      DB_NAME: feijigestudio
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - feijigestudio_network
+
+networks:
+  feijigestudio_network:
+    driver: bridge 

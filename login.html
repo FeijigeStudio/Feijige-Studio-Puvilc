@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Feijige Studio Community</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .language-switch {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .language-switch a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1 class="login-title">Login to Feijige Studio</h1>
+        <a href="captcha.html">Verify before login</a>
+        <form action="login" method="post" id="loginForm">
+            <label for="username" class="username-label">Username:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password" class="password-label">Password:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit" class="login-button">Login</button>
+        </form>
+        <div class="language-switch">
+            <a href="#" onclick="switchLanguage('en')">English</a> |
+            <a href="#" onclick="switchLanguage('zh')">中文</a>
+        </div>
+        <div id="errorMessage" style="display:none; color:red;"></div>
+    </div>
+
+    <script>
+        function switchLanguage(lang) {
+            const translations = {
+                en: {
+                    title: "Login to Feijige Studio",
+                    username: "Username:",
+                    password: "Password:",
+                    login: "Login"
+                },
+                zh: {
+                    title: "登录飞机哥工作室",
+                    username: "用户名：",
+                    password: "密码：",
+                    login: "登录"
+                }
+            };
+
+            document.querySelector('.login-title').textContent = translations[lang].title;
+            document.querySelector('.username-label').textContent = translations[lang].username;
+            document.querySelector('.password-label').textContent = translations[lang].password;
+            document.querySelector('.login-button').textContent = translations[lang].login;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Now all logins go through the standard process
+            fetch('/api/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username, password})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = data.redirectUrl; // Redirect based on server response
+                } else {
+                    alert('Login failed: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
+

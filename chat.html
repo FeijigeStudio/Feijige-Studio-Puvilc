@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - Feijige Studio</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            padding: 0.5rem;
+            background: #444;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .sidebar {
+            width: 250px;
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-right: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chat-header {
+            padding: 15px;
+            background: #007bff;
+            color: white;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .message {
+            max-width: 70%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            word-wrap: break-word;
+        }
+        .message.sent {
+            align-self: flex-end;
+            background-color: #007bff;
+            color: white;
+        }
+        .message.received {
+            align-self: flex-start;
+            background-color: #e6e6e6;
+            color: black;
+        }
+        .chat-input {
+            display: flex;
+            padding: 20px;
+            border-top: 1px solid #e6e6e6;
+        }
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            margin-right: 10px;
+        }
+        .chat-input button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
+        .language-switch {
+            text-align: right;
+            padding: 10px;
+        }
+        .language-switch button {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .language-switch button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Feijige Studio</h1>
+        <nav>
+            <a href="index.html" class="nav-home">Home</a>
+            <a href="about.html" class="nav-about">About</a>     
+            <a href="upload.html" class="nav-upload">Upload</a>
+            <a href="chat.html" class="nav-chat">Chat</a>
+            <a href="contact.html" class="nav-contact">Contact</a>
+        </nav>
+    </header>
+
+            <div class="chat-header">
+                <h2>Chat Room</h2>
+                <div class="language-switch">
+                    <button onclick="switchLanguage()">Switch to 中文</button>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type your message...">
+                <button onclick="sendMessage()" id="sendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Language switching
+        let currentLanguage = 'en';
+        const translations = {
+            en: {
+                title: "Chat - Feijige Studio",
+                home: "Home",
+                about: "About",
+                profile: "Profile",
+                upload: "Upload",
+                chat: "Chat",
+                contact: "Contact",
+                switchLanguage: "Switch to 中文",
+                inputPlaceholder: "Type your message...",
+                sendButton: "Send",
+                chatRoom: "Chat Room",
+                recentChats: "Recent Chats"
+            },
+            zh: {
+                title: "聊天 - 飞鸡阁工作室",
+                home: "主页",
+                about: "关于",
+                upload: "上传",
+                chat: "聊天",
+                contact: "联系我们",
+                switchLanguage: "Switch to English",
+                inputPlaceholder: "输入您的消息...",
+                sendButton: "发送",
+                chatRoom: "聊天室",
+                recentChats: "最近聊天"
+            }
+        };
+
+        function switchLanguage() {
+            currentLanguage = currentLanguage === 'en' ? 'zh' : 'en';
+            updatePageLanguage();
+        }
+
+        function updatePageLanguage() {
+            document.title = translations[currentLanguage].title;
+            document.querySelector('.nav-home').textContent = translations[currentLanguage].home;
+            document.querySelector('.nav-about').textContent = translations[currentLanguage].about;
+            document.querySelector('.nav-upload').textContent = translations[currentLanguage].upload;
+            document.querySelector('.nav-chat').textContent = translations[currentLanguage].chat;
+            document.querySelector('.nav-contact').textContent = translations[currentLanguage].contact;
+            document.querySelector('.language-switch button').textContent = translations[currentLanguage].switchLanguage;
+            document.getElementById('messageInput').placeholder = translations[currentLanguage].inputPlaceholder;
+            document.getElementById('sendButton').textContent = translations[currentLanguage].sendButton;
+            document.querySelector('.chat-header h2').textContent = translations[currentLanguage].chatRoom;
+            document.querySelector('.sidebar h2').textContent = translations[currentLanguage].recentChats;
+        }
+
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (message) {
+                addMessage(message, 'sent');
+                input.value = '';
+                // Simulate a response after a short delay
+                setTimeout(() => {
+                    const response = currentLanguage === 'en' ? 
+                        "Thank you for your message. How can I assist you today?" :
+                        "谢谢您的留言。今天我能为您提供什么帮助？";
+                    addMessage(response, 'received');
+                }, 1000);
+            }
+        }
+
+        function addMessage(text, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', type);
+            messageElement.textContent = text;
+            messagesContainer.appendChild(messageElement);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Event listener for Enter key
+        document.getElementById('messageInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Simulate recent chats
+        function addRecentChat(name) {
+            const recentChats = document.getElementById('recentChats');
+            const chatItem = document.createElement('li');
+            chatItem.textContent = name;
+            recentChats.appendChild(chatItem);
+        }
+
+        // Add some sample recent chats
+        addRecentChat("Alice");
+        addRecentChat("Bob");
+        addRecentChat("Charlie");
+
+        // Initial language setup
+        updatePageLanguage();
+    </script>
+</body>
+</html>
+
